@@ -15,16 +15,16 @@ jobs:
               context.payload.issue.body.includes("missing compatible arch in")
             ) {
               github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                owner: context.payload.issue.repo.owner,
+                repo: context.payload.issue.repo.repo,
                 body: "👋 Thanks for reporting! This is likely an issue with your installation not being set up for your M-class mac. We recommend reading some of the resources on getting your computer set up: https://duckduckgo.com/?q=ruby+cocoapods+m1&t=h_&ia=web#",
               })
             }
 
             const ghIssueTemplateResponse = await github.rest.repos.getContent({
-              owner: context.repo.owner.login,
-              repo: context.repo.name,
+              owner: context.payload.issue.repo.owner.login,
+              repo: context.payload.issue.repo.name,
               path: ".github/ISSUE_TEMPLATE.md",
             })
 
@@ -36,17 +36,17 @@ jobs:
             if (context.issue.state === "open" && template && template.replace(/\s+/g, "") === issue.body.replace(/\s+/g, "")) {
               // Post a message
               await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                owner: context.payload.issue.repo.owner,
+                repo: context.payload.issue.repo.repo,
                 body: `Hi there, thanks for the issue, but it seem that this issue is just the default template. Please create a new issue with the template filled out.`,
               })
 
               // Close the issue
               await github.rest.issues.update({
                 issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
+                owner: context.payload.issue.repo.owner,
+                repo: context.payload.issue.repo.repo,
                 state: "closed",
               })
             }
