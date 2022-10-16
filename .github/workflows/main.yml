@@ -10,7 +10,7 @@ jobs:
         with:
           script: |
             console.log(context)
-            const [owner, repo] = context.payload.issue.full_name.split('/')
+            const [owner, repo] = context.payload.repository.full_name.split('/')
             if (
               context.payload.issue.body.includes("incompatible architecture (have (x86_64), need (arm64e)))") ||
               context.payload.issue.body.includes("missing compatible arch in")
