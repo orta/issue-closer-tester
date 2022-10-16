@@ -9,19 +9,23 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            if (context.issue.body.includes("incompatible architecture (have (x86_64), need (arm64e)))") || context.issue.body.includes("missing compatible arch in") ) {
+            console.log(context.issue)
+            if (
+              context.issue.body.includes("incompatible architecture (have (x86_64), need (arm64e)))") ||
+              context.issue.body.includes("missing compatible arch in")
+            ) {
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: '👋 Thanks for reporting! This is likely an issue with your installation not being set up for your M-class mac. We recommend reading some of the resources on getting your computer set up: https://duckduckgo.com/?q=ruby+cocoapods+m1&t=h_&ia=web#'
+                body: "👋 Thanks for reporting! This is likely an issue with your installation not being set up for your M-class mac. We recommend reading some of the resources on getting your computer set up: https://duckduckgo.com/?q=ruby+cocoapods+m1&t=h_&ia=web#",
               })
             }
 
             const ghIssueTemplateResponse = await github.rest.repos.getContents({
-              owner: repo.owner.login,
-              repo: repo.name,
-              path: ".github/ISSUE_TEMPLATE.md"
+              owner: context.repo.owner.login,
+              repo: context.repo.name,
+              path: ".github/ISSUE_TEMPLATE.md",
             })
 
             const buffer = new Buffer(ghIssueTemplateResponse.data.content, "base64")
@@ -35,7 +39,7 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: `Hi there, thanks for the issue, but it seem that this issue is just the default template. Please create a new issue with the template filled out.`
+                body: `Hi there, thanks for the issue, but it seem that this issue is just the default template. Please create a new issue with the template filled out.`,
               })
 
               // Close the issue
@@ -43,6 +47,6 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                state: "closed"
+                state: "closed",
               })
             }
