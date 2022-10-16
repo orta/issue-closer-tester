@@ -9,10 +9,40 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            if( 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '👋 Thanks for reporting! ' + JSON.stringify(context, null, "  ")
+            if (context.issue.body.includes("incompatible architecture (have (x86_64), need (arm64e)))") || context.issue.body.includes("missing compatible arch in") ) {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '👋 Thanks for reporting! This is likely an issue with your installation not being set up for your M-class mac. We recommend reading some of the resources on getting your computer set up: https://duckduckgo.com/?q=ruby+cocoapods+m1&t=h_&ia=web#'
+              })
+            }
+
+            const ghIssueTemplateResponse = await github.rest.repos.getContents({
+              owner: repo.owner.login,
+              repo: repo.name,
+              path: ".github/ISSUE_TEMPLATE.md"
             })
+
+            const buffer = new Buffer(ghIssueTemplateResponse.data.content, "base64")
+            const template = buffer.toString()
+
+            // Whitespace between code on disk vs text which comes from GitHub is different.
+            // This took far too long to figure.
+            if (context.issue.state === "open" && template && template.replace(/\s+/g, "") === issue.body.replace(/\s+/g, "")) {
+              // Post a message
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `Hi there, thanks for the issue, but it seem that this issue is just the default template. Please create a new issue with the template filled out.`
+              })
+
+              // Close the issue
+              await github.rest.issues.update({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: "closed"
+              })
+            }
