@@ -22,7 +22,7 @@ jobs:
               })
             }
 
-            const ghIssueTemplateResponse = await github.rest.repos.getContents({
+            const ghIssueTemplateResponse = await github.rest.repos.getContent({
               owner: context.repo.owner.login,
               repo: context.repo.name,
               path: ".github/ISSUE_TEMPLATE.md",
