@@ -10,21 +10,22 @@ jobs:
         with:
           script: |
             console.log(context)
+            const [owner, repo] = full_name.split('/')
             if (
               context.payload.issue.body.includes("incompatible architecture (have (x86_64), need (arm64e)))") ||
               context.payload.issue.body.includes("missing compatible arch in")
             ) {
               github.rest.issues.createComment({
                 issue_number: context.payload.issue.number,
-                owner: context.payload.issue.repo.owner,
-                repo: context.payload.issue.repo.repo,
+                owner,
+                repo,
                 body: "👋 Thanks for reporting! This is likely an issue with your installation not being set up for your M-class mac. We recommend reading some of the resources on getting your computer set up: https://duckduckgo.com/?q=ruby+cocoapods+m1&t=h_&ia=web#",
               })
             }
 
             const ghIssueTemplateResponse = await github.rest.repos.getContent({
-              owner: context.payload.issue.repo.owner.login,
-              repo: context.payload.issue.repo.name,
+              owner,
+              repo,
               path: ".github/ISSUE_TEMPLATE.md",
             })
 
@@ -37,16 +38,16 @@ jobs:
               // Post a message
               await github.rest.issues.createComment({
                 issue_number: context.payload.issue.number,
-                owner: context.payload.issue.repo.owner,
-                repo: context.payload.issue.repo.repo,
+                owner,
+                repo,
                 body: `Hi there, thanks for the issue, but it seem that this issue is just the default template. Please create a new issue with the template filled out.`,
               })
 
               // Close the issue
               await github.rest.issues.update({
-                issue_number: context.issue.number,
-                owner: context.payload.issue.repo.owner,
-                repo: context.payload.issue.repo.repo,
+                issue_number: context.payload.issue.number,
+                owner,
+                repo,
                 state: "closed",
               })
             }
