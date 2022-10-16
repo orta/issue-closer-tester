@@ -9,10 +9,10 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |
-            console.log(context.issue)
+            console.log(context)
             if (
-              context.issue.body.includes("incompatible architecture (have (x86_64), need (arm64e)))") ||
-              context.issue.body.includes("missing compatible arch in")
+              context.payload.issue.body.includes("incompatible architecture (have (x86_64), need (arm64e)))") ||
+              context.payload.issue.body.includes("missing compatible arch in")
             ) {
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
