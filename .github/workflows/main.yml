@@ -39,7 +39,7 @@ jobs:
             console.log( template.replace(/\s+/g, "") )
             console.log( issue.body.replace(/\s+/g, "") )
             console.log( issue.body.replace(/\s+/g, "").includes(template.replace(/\s+/g, "")))
-            console.log( issue.body.toLowercase().replace(/\s+/g, "").includes(template.toLowercase().replace(/\s+/g, "")))
+            console.log( issue.body.toLowerCase().replace(/\s+/g, "").includes(template.toLowerCase().replace(/\s+/g, "")))
 
 
             if (issue.state === "open" && template && issue.body.replace(/\s+/g, "").includes(template.replace(/\s+/g, ""))) {
